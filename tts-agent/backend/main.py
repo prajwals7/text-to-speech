@@ -7,7 +7,7 @@ health check (/api/health), and serves the frontend web interface.
 import os
 from pathlib import Path
 from typing import Optional
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -32,6 +32,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def handle_vercel_rewrites(request: Request, call_next):
+    """
+    Normalizes request paths when running behind Vercel serverless rewrites.
+    """
+    path_param = request.query_params.get("path")
+    if path_param:
+        clean = path_param if path_param.startswith("/") else f"/{path_param}"
+        request.scope["path"] = f"/api{clean}" if not clean.startswith("/api") else clean
+    elif request.headers.get("x-matched-path"):
+        request.scope["path"] = request.headers["x-matched-path"]
+    return await call_next(request)
+
 # Active TTS Provider instance
 provider: TTSProvider = EdgeTTSProvider()
 
@@ -48,6 +61,7 @@ class NormalizeRequest(BaseModel):
 
 
 @app.get("/api/health")
+@app.get("/health")
 async def health_check():
     """Health check and provider info."""
     return {
@@ -60,6 +74,7 @@ async def health_check():
 
 
 @app.get("/api/voices")
+@app.get("/voices")
 async def list_voices():
     """Returns curated shortlist of high quality voices."""
     voices = provider.get_voices()
@@ -72,6 +87,7 @@ async def list_voices():
 
 
 @app.post("/api/normalize")
+@app.post("/normalize")
 async def normalize_endpoint(req: NormalizeRequest):
     """Utility endpoint to preview text normalization."""
     normalized = normalize_text(req.text)
@@ -79,6 +95,7 @@ async def normalize_endpoint(req: NormalizeRequest):
 
 
 @app.post("/api/tts")
+@app.post("/tts")
 async def synthesize_speech(req: TTSRequest):
     """
     Synthesizes speech from text.
@@ -130,9 +147,11 @@ async def synthesize_speech(req: TTSRequest):
     )
 
 
-# Serve Frontend UI
-FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
-if FRONTEND_DIR.exists():
-    app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
-    app.mount("/", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")
+# Serve Frontend UI (only when running locally, Vercel edge serves public/)
+if not os.environ.get("VERCEL"):
+    FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+    if FRONTEND_DIR.exists():
+        app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
+        app.mount("/", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")
+
 

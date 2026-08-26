@@ -30,3 +30,5 @@ desktop.ini
 .vscode/
 *.swp
 *.swo
+
+.vercel
