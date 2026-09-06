@@ -1,0 +1,33 @@
+{
+  "name": "multilingual-voice-assistant-monorepo",
+  "version": "1.0.0",
+  "description": "Full-featured, multilingual AI voice assistant with wake-word activation, real-time STT, live translation, and Claude conversational intelligence",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/web",
+    "apps/mobile"
+  ],
+  "scripts": {
+    "dev": "npm run dev:web",
+    "dev:web": "npm --prefix apps/web run dev",
+    "dev:backend": "python apps/backend/run.py",
+    "build": "npm run build:core && npm run build:web",
+    "build:core": "npm --prefix packages/core run build",
+    "build:web": "npm --prefix apps/web run build"
+  },
+  "keywords": [
+    "voice-assistant",
+    "multilingual",
+    "whisper",
+    "claude",
+    "elevenlabs",
+    "wakeword",
+    "porcupine",
+    "translation",
+    "react",
+    "fastapi"
+  ],
+  "author": "",
+  "license": "MIT"
+}

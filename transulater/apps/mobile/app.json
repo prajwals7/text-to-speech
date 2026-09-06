@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "Aura Voice AI",
+    "slug": "aura-voice-assistant",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "backgroundColor": "#1e1b4b"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aura.voiceassistant",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "This app requires microphone access for wake-word activation, voice queries, and live speech translation.",
+        "NSSpeechRecognitionUsageDescription": "This app uses speech recognition to convert your voice into text in any language.",
+        "UIBackgroundModes": ["audio"]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#1e1b4b"
+      },
+      "package": "com.aura.voiceassistant",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MICROPHONE",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.WAKE_LOCK"
+      ]
+    }
+  }
+}

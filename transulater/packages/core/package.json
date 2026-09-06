@@ -1,0 +1,33 @@
+{
+  "name": "@voice-assistant/core",
+  "version": "1.0.0",
+  "description": "Framework-agnostic modular core engine for multilingual AI voice assistants with wake word detection, STT, TTS, live translation, and Claude LLM streaming",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "voice-assistant",
+    "wake-word",
+    "porcupine",
+    "whisper",
+    "claude",
+    "elevenlabs",
+    "speech-to-text",
+    "text-to-speech",
+    "translation"
+  ],
+  "author": "Voice Assistant Team",
+  "license": "MIT",
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.3"
+  }
+}
